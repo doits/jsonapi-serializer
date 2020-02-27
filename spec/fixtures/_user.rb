@@ -22,6 +22,10 @@ class UserSerializer
   set_id :uid
   attributes :first_name, :last_name, :email
 
+  meta :first_name_length do |obj|
+    obj.first_name.size
+  end
+
   meta do |obj|
     {
       email_length: obj.email.size

@@ -9,6 +9,7 @@ RSpec.describe JSONAPI::Serializer do
 
   it do
     expect(serialized['data']).to have_meta('email_length' => user.email.size)
+    expect(serialized['data']).to have_meta('first_name_length' => user.first_name.size)
   end
 
   context 'with root meta' do
