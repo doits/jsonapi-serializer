@@ -8,10 +8,15 @@ module FastJsonapi
       @conditional_proc = options[:if]
     end
 
-    def serialize(record, serialization_params, output_hash)
+    def serialize(record, serialization_params, output_hash, base = nil)
       if conditionally_allowed?(record, serialization_params)
         if method.is_a?(Proc)
-          output_hash[key] = FastJsonapi.call_proc(method, record, serialization_params)
+          output_hash[key] =
+            if base
+              FastJsonapi.call_instance_exec(base, method, record, serialization_params)
+            else
+              FastJsonapi.call_proc(method, record, serialization_params)
+            end
         else
           output_hash[key] = record.public_send(method)
         end

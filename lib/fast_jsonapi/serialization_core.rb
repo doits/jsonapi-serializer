@@ -38,7 +38,7 @@ module FastJsonapi
 
       def links_hash(record, params = {})
         data_links.each_with_object({}) do |(_k, link), hash|
-          link.serialize(record, params, hash)
+          link.serialize(record, params, hash, self)
         end
       end
 
@@ -48,7 +48,7 @@ module FastJsonapi
         attributes = {} if fieldset == []
 
         attributes.each_with_object({}) do |(_k, attribute), hash|
-          attribute.serialize(record, params, hash)
+          attribute.serialize(record, params, hash, self)
         end
       end
 
@@ -66,11 +66,11 @@ module FastJsonapi
       def meta_hash(record, params = {})
         return if !meta_core_to_serialize && !meta_to_serialize
 
-        base = meta_core_to_serialize ? FastJsonapi.call_proc(meta_core_to_serialize, record, params) : {}
+        base = meta_core_to_serialize ? FastJsonapi.call_instance_exec(self, meta_core_to_serialize, record, params) : {}
         return base unless meta_to_serialize
 
         meta_to_serialize.each do |(_k, attribute)|
-          attribute.serialize(record, params, base)
+          attribute.serialize(record, params, base, self)
         end
 
         base
@@ -132,7 +132,7 @@ module FastJsonapi
       # rubocop:enable Lint/UnusedMethodArgument
 
       def id_from_record(record, params)
-        return FastJsonapi.call_proc(record_id, record, params) if record_id.is_a?(Proc)
+        return FastJsonapi.call_instance_exec(self, record_id, record, params) if record_id.is_a?(Proc)
         return record.send(record_id) if record_id
         raise MandatoryField, 'id is a mandatory field in the jsonapi spec' unless record.respond_to?(:id)
 

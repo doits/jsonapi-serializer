@@ -17,5 +17,13 @@ module FastJsonapi
         proc.call(*params.take(proc.parameters.length))
       end
     end
+
+    def call_instance_exec(base, proc, *params)
+      if proc.arity.negative?
+        base.instance_exec(params.first, &proc)
+      else
+        base.instance_exec(*params.take(proc.parameters.length), &proc)
+      end
+    end
   end
 end
