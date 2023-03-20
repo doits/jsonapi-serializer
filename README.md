@@ -1,6 +1,10 @@
 # JSON:API Serialization Library
 
-## :warning: :construction: [At the moment, contributions are welcome only for v3](https://github.com/jsonapi-serializer/jsonapi-serializer/pull/141)! :construction: :warning:
+## :warning: :construction: v2 (the `master` branch) is in maintenance mode! :construction: :warning:
+
+We'll gladly accept bugfixes and security-related fixes for v2 (the `master` branch), but at this stage, contributions for new features/improvements are welcome only for v3. Please feel free to leave comments in the [v3 Pull Request](https://github.com/jsonapi-serializer/jsonapi-serializer/pull/141). 
+
+---
 
 A fast [JSON:API](https://jsonapi.org/) serializer for Ruby Objects.
 
@@ -38,6 +42,7 @@ article in the `docs` folder for any questions related to methodology.
   * [Conditional Attributes](#conditional-attributes)
   * [Conditional Relationships](#conditional-relationships)
   * [Specifying a Relationship Serializer](#specifying-a-relationship-serializer)
+  * [Ordering `has_many` Relationship](#ordering-has_many-relationship)
   * [Sparse Fieldsets](#sparse-fieldsets)
   * [Using helper methods](#using-helper-methods)
 * [Performance Instrumentation](#performance-instrumentation)
@@ -405,7 +410,7 @@ end
 `#fetch(record, **options, &block)` method:
 
 - `record` is the record that is currently serialized
-- `options` is everything that was passed to `cache_options` except `store`, so it can be everyhing the cache store supports
+- `options` is everything that was passed to `cache_options` except `store`, so it can be everything the cache store supports
 - `&block` should be executed to fetch new data if cache is empty
 
 So for the example above it will call the cache instance like this:
@@ -571,6 +576,20 @@ class MovieSerializer
     else
       ActorSerializer
     end
+  end
+end
+```
+
+### Ordering `has_many` Relationship
+
+You can order the `has_many` relationship by providing a block:
+
+```ruby
+class MovieSerializer
+  include JSONAPI::Serializer
+
+  has_many :actors do |movie|
+    movie.actors.order(position: :asc)
   end
 end
 ```
