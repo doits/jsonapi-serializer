@@ -18,6 +18,7 @@ Gem::Specification.new do |gem|
   gem.files = Dir['lib/**/*']
   gem.require_paths = ['lib']
   gem.extra_rdoc_files = ['LICENSE.txt', 'README.md']
+  gem.required_ruby_version = '>= 3.3'
 
   gem.add_runtime_dependency('activesupport', '>= 4.2')
 
